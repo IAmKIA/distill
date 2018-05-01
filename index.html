@@ -15,6 +15,7 @@
 
 
 
+
 </script>
 
 <dt-article>
@@ -112,9 +113,26 @@
                 \alpha = \log_{0.5} \overline{f(X)} \\
                 r(x) = x^{log_{0.5} \overline{f(X)}}
                 \]
-
+                So our equation for population culling could look something like this:
+                \[X' = \{x \in X | rand()^{log_{0.5} \overline{f(X)}} < f(x)\}\]
             </p>
-
+        </li>
+        <li>
+            <p>
+                <b>Crossbreeding:</b> Now we have removed the less desirable organisms from our population we need to
+                replace them with ones that will hopefully be at least as useful as those left. We can do this by mixing
+                the features of the remaining populous to create these new organisms. The question now is: Who gets to
+                breed? In nature, generally, the most desirable organisms get to breed more prolifically so we can
+                replicate this in our algorithm. So for each organism that we need to create we will breed the 2 highest
+                ranking organisms in our suitability list. To create this list we need to ask ourselves how we determine
+                and organsism's suitability. At first thought the most obvious choice is to use their fitness to
+                determine this however this would mean that all newly bred organisms will be identical which is boring.
+                So we will use the suitability function \(s(x) = rand()*f(x)^\gamma \). \(\gamma\) is a <a
+                    href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">hyperparameter</a> we can use
+                to change how strongly one's fitness affects their place in the suitability ranking. A value of 0 means
+                fitness has no effect and 1 means the entire value of the fitness function is used in the suitability
+                function.
+            </p>
         </li>
     </ol>
 </dt-article>
