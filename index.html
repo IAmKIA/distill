@@ -8,46 +8,81 @@
 
 <script type="text/front-matter">
   title: "High Dimensional Optimisation Using Evolutionary Methods" description: "Description" authors: - Callum Gooding: http://github.com/goodingc affiliations: - The University of Nottingham: https://nottingham.ac.uk
+
+
+
+
 </script>
 
 <dt-article>
-  <h1>High Dimensional Optimisation Using Evolutionary Methods</h1>
-  <h2>A guide to evolutionary optimisation and other naturally inspired methods used in machine learning.</h2>
-  <dt-byline></dt-byline>
-  <h2>Introduction</h2>
-  <p>
-    Evolutionary optimisation takes inspiration from nature and the notion of survival of the fittest to find a optimal solution in an often high dimensional search space. These implementations vary in thier resemblance to reality ranging from merely selecting
-    the best option from a population to replicating the entire evolutionary mechanism right down to implementing crude chromosomes.
-  </p>
-  <hr>
-  <h2>Basics</h2>
-  <p>
-    To introduce the basic principles of evolutionary optimisation let's take a look at a simple example at how a population collectively nears an optimal solution to a problem. In this example, a group of organisms each with just 5 <a href="https://en.wikipedia.org/wiki/Nucleotide">nucleotides</a>    (units of DNA) evolve to emulate a target organism that we can define. Luckily for us, each nucleotide can be encoded as a value from 0 to 1 and are continuous. This means that a 0.5 nucleotide is closer to a 0.6 nucleotide than a 0.3 one. To store
-    this data, we could use a 2D array of dimensions \(N*5\) where \(N\) is the population size.
-  </p>
-  <h3>The Steps:</h3>
-  <ol>
-    <li><b>Population:</b> This involves creating a population \(X\) of size \(N\) of organisms each with random nucleotide values. This may look as follows: \[X = \begin{array}{11} \{\{0.529, 0.358, 0.692, 0.492, 0.849\},\\ \;\;\{0.063, 0.914, 0.256, 0.252,
-      0.275\},\\ \qquad\;\;\{0.629, 0.042, 0.753, 0.737, 0.945\}, ...\}\end{array}\]</li>
-  
-    <li>
-      <p><b>Evaluation:</b> This requires us to first determine a <a href="https://en.wikipedia.org/wiki/Fitness_function">fitness function</a> \(f\). This will enable us to determine how useful a given organism is to our population and hence worthy of reproduction.
-        As we are trying to get each organism \(x\) to emulate our goal organism \(g\) we need could determine the "distance" from \(x\) to \(g\). We could do this by thinking of each organism as a point in 5 dimensional space, with each nucleotide value
-        a coordinate for thier location. Using this abstraction we can use pythagoras' theorem to determine the distance between each organism.</p>
-    
-      <p>For example if organism \(x\) were represented by the vector \(\{0.593\}\)</p>
-      </li>
-  
-    <li>
-    
-      <p><b>Culling:</b> Inevitably there will be some organisms that we don't want in our population as they drag down our average fitness. The task now is to remove these unfavourable organisms. This is seemingly simple: kill off the worst performing half.
-        However, being the benevolent gods that we are it seems fitting to give some of the worse performers a chance. This has the benefit of retaining some of the diversity that often proves beneficial to many species as well as those that may only
-        be one generation away from becoming one of the best performers. This approach calls for a more complex selection algorithm, one that leaves the survival of an organism down to chance but with the better odds given to those closer to our goal.</p>
-    
-      <p>In order to implement this we generate a random number for each \(x\) and evaluate it against \(f(x)\). If the number is higher than the fitness the organism dies, otherwise it lives. However, as we begin to cull our first generation it is apparent
-        that a very large portion of the population is removed and we are left with a very small breeding pool. This is a result of our random numbers avering out to 0.5, a value likley much higher than our average fitness for the first generation. In
-        order to remedy this we must modify the probability curve with which our numbers are generated such that they average out to the mean population fitness \(\overline{f(X)}\)</p>
-      </li>
+    <h1>High Dimensional Optimisation Using Evolutionary Methods</h1>
+    <h2>A guide to evolutionary optimisation and other naturally inspired methods used in machine learning.</h2>
+    <dt-byline></dt-byline>
+    <h2>Introduction</h2>
+    <p>
+        Evolutionary optimisation takes inspiration from nature and the notion of survival of the fittest to find a
+        optimal solution in an often high dimensional search space. These implementations vary in thier resemblance to
+        reality ranging from merely selecting the best option from a population to replicating the entire evolutionary
+        mechanism right down to implementing crude chromosomes. This guide will explain the basics of the algorithm, its
+        potential improvements, and its applications to techniques that require optimisation.
+    </p>
+    <hr>
+    <h2>Basics</h2>
+    <p>
+        To introduce the basic principles of evolutionary optimisation let's take a look at a simple example at how a
+        population collectively nears an optimal solution to a problem. In this example, a group of organisms each with
+        just 5 <a href="https://en.wikipedia.org/wiki/Nucleotide">nucleotides</a> (units of DNA) evolve to emulate a
+        target organism that we can define. Luckily for us, each nucleotide can be encoded as a value from 0 to 1 and
+        are continuous. This means that a 0.5 nucleotide is closer to a 0.6 nucleotide than a 0.3 one. To store
+        this data, we could use a 2D array of dimensions \(N*5\) where \(N\) is the population size.
+    </p>
+    <h3>The Steps:</h3>
+    <ol>
+        <li><b>Population:</b> This involves creating a population \(X\) of size \(N\) of organisms each with random
+            nucleotide values. This may look as follows:
+            \[X = \begin{array}{11} \{\{0.529, 0.358, 0.692, 0.492, 0.849\},\\
+            \;\;\{0.063, 0.914, 0.256, 0.252, 0.275\},\\
+            \qquad\;\;\{0.629, 0.042, 0.753, 0.737, 0.945\}, ...\}\end{array}\]
+        </li>
+
+        <li>
+            <p><b>Evaluation:</b> This requires us to first determine a <a
+                    href="https://en.wikipedia.org/wiki/Fitness_function">fitness function</a> \(f\). This will enable
+                us to determine how useful a given organism is to our population and hence worthy of reproduction.
+                As we are trying to get each organism \(x\) to emulate our goal organism \(g\) we need could determine
+                the "distance" from \(x\) to \(g\). We could do this by thinking of each organism as a point in 5
+                dimensional space, with each nucleotide value
+                a coordinate for thier location. Using this abstraction we can use pythagoras' theorem to determine the
+                distance between each organism.</p>
+
+            <p>For example if organism \(x\) were represented by the vector \(\{0.529, 0.358, 0.692, 0.492, 0.849\}\)
+                and \(g\) were represented by \(\{0.629, 0.042, 0.753, 0.737, 0.945\}\), the value of \(f(x)\) would be
+                the euclidian distance between these two vectors. Henceforth:
+                \[f(x) = \sqrt{\sum_{i=1}^{5}(x_i - g_i)^2}\]
+                giving the value of \(f(x) = 0.428\) for our case.</p>
+        </li>
+
+        <li>
+
+            <p><b>Culling:</b> Inevitably there will be some organisms that we don't want in our population as they drag
+                down our average fitness. The task now is to remove these unfavourable organisms. This is seemingly
+                simple: kill off the worst performing half.
+                However, being the benevolent gods that we are it seems fitting to give some of the worse performers a
+                chance. This has the benefit of retaining some of the diversity that often proves beneficial to many
+                species as well as those that may only
+                be one generation away from becoming one of the best performers. This approach calls for a more complex
+                selection algorithm, one that leaves the survival of an organism down to chance but with the better odds
+                given to those closer to our goal.</p>
+
+            <p>In order to implement this we generate a random number for each \(x\) and evaluate it against \(f(x)\).
+                If the number is higher than the fitness the organism dies, otherwise it lives. However, as we begin to
+                cull our first generation it is apparent
+                that a very large portion of the population is removed and we are left with a very small breeding pool.
+                This is a result of our random numbers avering out to 0.5, a value likley much higher than our average
+                fitness for the first generation. In
+                      order to remedy this we must modify the probability curve with which our numbers are generated
+                such that they average out to the mean population fitness \(\overline{f(X)}\)</p>
+        </li>
     </ol>
 </dt-article>
 
